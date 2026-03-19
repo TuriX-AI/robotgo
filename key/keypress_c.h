@@ -89,15 +89,26 @@
 
 		if (!sEventDrvrRef) {
 			kr = IOMasterPort(bootstrap_port, &masterPort);
-			assert(KERN_SUCCESS == kr);
+			if (kr != KERN_SUCCESS) {
+				return 0;
+			}
 			kr = IOServiceGetMatchingServices(masterPort, IOServiceMatching(kIOHIDSystemClass), &iter);
-			assert(KERN_SUCCESS == kr);
+			if (kr != KERN_SUCCESS) {
+				return 0;
+			}
 
 			service = IOIteratorNext(iter);
-			assert(service);
+			if (!service) {
+				IOObjectRelease(iter);
+				return 0;
+			}
 
 			kr = IOServiceOpen(service, mach_task_self(), kIOHIDParamConnectType, &sEventDrvrRef);
-			assert(KERN_SUCCESS == kr);
+			if (kr != KERN_SUCCESS) {
+				IOObjectRelease(service);
+				IOObjectRelease(iter);
+				return 0;
+			}
 
 			IOObjectRelease(service);
 			IOObjectRelease(iter);
@@ -192,13 +203,25 @@ void toggleKeyCode(MMKeyCode code, const bool down, MMKeyFlags flags, uintptr pi
 		event.compound.subType = NX_SUBTYPE_AUX_CONTROL_BUTTONS;
 		event.compound.misc.L[0] = evtInfo;
 
-		kr = IOHIDPostEvent(_getAuxiliaryKeyDriver(), 
+		io_connect_t conn = _getAuxiliaryKeyDriver();
+		if (conn == 0) {
+			return;
+		}
+		kr = IOHIDPostEvent(conn,
 								NX_SYSDEFINED, loc, &event, kNXEventDataVersion, 0, FALSE);
-		assert(KERN_SUCCESS == kr);
+		if (kr != KERN_SUCCESS) {
+			return;
+		}
 	} else {
 		CGEventSourceRef source = CGEventSourceCreate(kCGEventSourceStateCombinedSessionState);
+		if (source == NULL) {
+			return;
+		}
 		CGEventRef keyEvent = CGEventCreateKeyboardEvent(source, (CGKeyCode)code, down);
-		assert(keyEvent != NULL);
+		if (keyEvent == NULL) {
+			CFRelease(source);
+			return;
+		}
 
 		CGEventSetType(keyEvent, down ? kCGEventKeyDown : kCGEventKeyUp);
 		if (flags != 0) {

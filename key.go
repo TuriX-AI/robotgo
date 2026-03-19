@@ -349,6 +349,10 @@ func checkKeyCodes(k string) (key C.MMKeyCode, err error) {
 	}
 
 	if len(k) == 1 {
+		if code, ok := asciiKeyCode(k[0]); ok {
+			return C.MMKeyCode(code), nil
+		}
+
 		val1 := C.CString(k)
 		defer C.free(unsafe.Pointer(val1))
 
