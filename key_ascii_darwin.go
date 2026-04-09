@@ -45,25 +45,25 @@ func asciiKeyCode(k byte) (int, bool) {
 		return 0x10, true
 	case 't':
 		return 0x11, true
-	case '1':
+	case '1', '!':
 		return 0x12, true
-	case '2':
+	case '2', '@':
 		return 0x13, true
-	case '3':
+	case '3', '#':
 		return 0x14, true
-	case '4':
+	case '4', '$':
 		return 0x15, true
-	case '6':
+	case '6', '^':
 		return 0x16, true
-	case '5':
+	case '5', '%':
 		return 0x17, true
-	case '9':
+	case '9', '(':
 		return 0x19, true
-	case '7':
+	case '7', '&':
 		return 0x1A, true
-	case '8':
+	case '8', '*':
 		return 0x1C, true
-	case '0':
+	case '0', ')':
 		return 0x1D, true
 	case 'o':
 		return 0x1F, true
@@ -83,6 +83,34 @@ func asciiKeyCode(k byte) (int, bool) {
 		return 0x2D, true
 	case 'm':
 		return 0x2E, true
+	case '.', '>':
+		return 0x2F, true // kVK_ANSI_Period
+	case ',', '<':
+		return 0x2B, true // kVK_ANSI_Comma
+	case '/', '?':
+		return 0x2C, true // kVK_ANSI_Slash
+	case ';', ':':
+		return 0x29, true // kVK_ANSI_Semicolon
+	case '\'', '"':
+		return 0x27, true // kVK_ANSI_Quote
+	case '[', '{':
+		return 0x21, true // kVK_ANSI_LeftBracket
+	case ']', '}':
+		return 0x1E, true // kVK_ANSI_RightBracket
+	case '\\', '|':
+		return 0x2A, true // kVK_ANSI_Backslash
+	case '-', '_':
+		return 0x1B, true // kVK_ANSI_Minus
+	case '=', '+':
+		return 0x18, true // kVK_ANSI_Equal
+	case '`', '~':
+		return 0x32, true // kVK_ANSI_Grave
+	case ' ':
+		return 0x31, true // kVK_Space
+	case '\t':
+		return 0x30, true // kVK_Tab
+	case '\n', '\r':
+		return 0x24, true // kVK_Return
 	default:
 		return 0, false
 	}
